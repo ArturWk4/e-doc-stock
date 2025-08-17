@@ -18,32 +18,6 @@ const UserProfile = () => {
 
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const storedUser = localStorage.getItem(LOCAL_STORAGE_KEY);
-    if (storedUser) {
-      const parsedUser = JSON.parse(storedUser);
-      setUser(parsedUser);
-      setFormData(parsedUser);
-    }
-  }, []);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleEditToggle = () => {
-    if (isEditing) {
-      setUser(formData);
-      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(formData));
-    } else {
-      setFormData(user);
-    }
-    setIsEditing(!isEditing);
-  };
 
   return (
     <div className="max-w-md mx-auto bg-white shadow-md rounded-lg p-6 mt-8 relative">
