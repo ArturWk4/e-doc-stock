@@ -7,7 +7,7 @@ const Navbar = () => {
         <div className="flex justify-center h-16 items-center">
           <div className="md:flex space-x-8">
             <NavLink
-              to="/"
+              to="/briefing"
               end
               className={({ isActive }) =>
                 isActive
@@ -15,27 +15,27 @@ const Navbar = () => {
                   : 'text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium'
               }
             >
-              Главная
+              Инструктаж по должностям
             </NavLink>
             <NavLink
-              to="/users"
+              to="/literature"
               className={({ isActive }) =>
                 isActive
                   ? 'text-indigo-600 px-3 py-2 rounded-md text-sm font-medium border-b-2 border-indigo-600'
                   : 'text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium'
               }
             >
-              Пользователи
+              Литератра компании
             </NavLink>
             <NavLink
-              to="/posts"
+              to="/documents"
               className={({ isActive }) =>
                 isActive
                   ? 'text-indigo-600 px-3 py-2 rounded-md text-sm font-medium border-b-2 border-indigo-600'
                   : 'text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium'
               }
             >
-              Посты
+              Документы от сотрудников
             </NavLink>
             <NavLink
               to="/profile"

@@ -41,56 +41,17 @@ const HomePage = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-r from-indigo-500 via-purple-600 to-pink-500 p-4">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-r from-indigo-500 via-purple-600 to-indigo-400 p-4">
       <motion.h1
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 1.2, ease: "easeOut" }}
         className="text-white text-4xl sm:text-6xl font-extrabold drop-shadow-lg text-center"
       >
-        {isSubmitted ? `Добро пожаловать, ${name}!` : "Привет, это тестовое задание"}
+        Добро пожаловать
       </motion.h1>
 
-      {!isSubmitted && (
-        <motion.form
-          onSubmit={handleSubmit}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1 }}
-          className="mt-8 w-full max-w-md bg-white bg-opacity-90 rounded-lg p-6 shadow-lg flex flex-col gap-4"
-        >
-          <input
-            type="text"
-            placeholder="Ваше имя"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="p-3 border rounded focus:outline-none focus:ring-2 focus:ring-indigo-400"
-            required
-          />
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="p-3 border rounded focus:outline-none focus:ring-2 focus:ring-indigo-400"
-            required
-          />
-          <input
-            type="tel"
-            placeholder="Телефон"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            className="p-3 border rounded focus:outline-none focus:ring-2 focus:ring-indigo-400"
-            required
-          />
-          <button
-            type="submit"
-            className="mt-2 px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition"
-          >
-            Отправить
-          </button>
-        </motion.form>
-      )}
+    
     </div>
   );
 };

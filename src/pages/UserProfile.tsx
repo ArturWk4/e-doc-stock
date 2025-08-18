@@ -18,20 +18,36 @@ const UserProfile = () => {
 
   const navigate = useNavigate();
 
+  useEffect(() => {
+    const storedUser = localStorage.getItem(LOCAL_STORAGE_KEY);
+    if (storedUser) {
+      const parsedUser = JSON.parse(storedUser);
+      setUser(parsedUser);
+      setFormData(parsedUser);
+    }
+  }, []);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleEditToggle = () => {
+    if (isEditing) {
+      setUser(formData);
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(formData));
+    } else {
+      setFormData(user);
+    }
+    setIsEditing(!isEditing);
+  };
 
   return (
     <div className="max-w-md mx-auto bg-white shadow-md rounded-lg p-6 mt-8 relative">
-      <div className="absolute top-4 right-4 flex items-center space-x-2">
-        <label className="text-gray-700 font-medium">Режим:</label>
-        <select
-          value={isAdmin ? 'admin' : 'user'}
-          onChange={e => setIsAdmin(e.target.value === 'admin')}
-          className="border border-gray-300 rounded-md p-1"
-        >
-          <option value="user">Пользователь</option>
-          <option value="admin">Админ</option>
-        </select>
-      </div>
+
 
       <h2 className="text-2xl font-semibold mb-6 text-indigo-600">Личный кабинет</h2>
 
