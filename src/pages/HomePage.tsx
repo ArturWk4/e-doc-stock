@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { NavLink } from "react-router-dom";
 
 const LOCAL_STORAGE_KEY = "userData";
 const EXPIRATION_MINUTES = 10;
@@ -46,10 +47,27 @@ const HomePage = () => {
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 1.2, ease: "easeOut" }}
-        className="text-white text-4xl sm:text-6xl font-extrabold drop-shadow-lg text-center"
+        className="text-white text-4xl sm:text-6xl font-extrabold drop-shadow-lg text-center mb-10"
       >
         Добро пожаловать
       </motion.h1>
+      <div className="flex items-center gap-10">
+                  <NavLink
+              to="/login"
+              className='text-white px-3 py-2 rounded-xl text-2xl font-medium border-2 border-indigo-600'
+              
+            >
+              Вход
+            </NavLink>
+                        <NavLink
+              to="/register"
+              className='text-white px-3 py-2 rounded-xl text-2xl font-medium border-2 border-indigo-600'
+                  
+            >
+              Регистрация
+            </NavLink>
+
+      </div>
 
     
     </div>

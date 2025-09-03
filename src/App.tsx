@@ -6,6 +6,8 @@ import "./index.css";
 import BriefingPage from "./pages/BriefingPage";
 import LiteraturePage from "./pages/LiteraturePage";
 import DocumentsPage from "./pages/DocumentsPage";
+import LoginPage from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage";
 
 const UserProfile = React.lazy(() => import('./pages/UserProfile'));
 const App = () => {
@@ -22,6 +24,8 @@ const App = () => {
             <Route path="/briefing" element={<BriefingPage />} />
             <Route path="/literature" element={<LiteraturePage />} />
             <Route path="/documents" element={<DocumentsPage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
           </Routes>
         </React.Suspense>
       </div>

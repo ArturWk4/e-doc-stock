@@ -1,40 +1,47 @@
-import React, { useState } from "react";
-import { Dialog } from "@headlessui/react";
-import { Star, StarOff } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Star } from "lucide-react";
+import DocumentsList from "../components/DocumentsList";
+import DocumentPopup from "../components/DocumentPopup";
 
-
-type Document = {
-  id: number;
-  title: string;
-  description: string;
-  content: string;
-};
-
-const documents: Document[] = [
+export const mockDocuments = [
   {
     id: 1,
-    title: "Отчёт за Август",
-    description: "Финансовый отчёт за август 2025",
-    content: "Тут можно отобразить содержимое документа...",
+    title: "Документ 1",
+    description: "Описание первого документа",
+    fileUrl: "https://via.placeholder.com/400x200.png?text=Документ+1",
+    likes: 0,
+    comments: [
+      { id: 1, user: "Alice", text: "Отличный документ!", createdAt: "2025-09-03T10:00:00Z" },
+      { id: 2, user: "Bob", text: "Спасибо за информацию", createdAt: "2025-09-03T12:30:00Z" },
+    ],
   },
   {
     id: 2,
-    title: "Договор №234",
-    description: "Договор аренды офиса",
-    content: "Текст договора...",
-  },
-  {
-    id: 3,
-    title: "Презентация проекта",
-    description: "Слайды для встречи с клиентом",
-    content: "Встроенный просмотр презентации...",
+    title: "Документ 2",
+    description: "Описание второго документа",
+    fileUrl: "",
+    likes: 0,
+    comments: [],
   },
 ];
 
+type Comment = { id: number; user: string; text: string; createdAt: string };
+type Document = { id: number; title: string; description: string; fileUrl?: string; content?: string; likes?: number; comments?: Comment[] };
+
 export default function DocumentsPage() {
+  const [documents, setDocuments] = useState<Document[]>([]);
   const [selectedDoc, setSelectedDoc] = useState<Document | null>(null);
   const [favorites, setFavorites] = useState<number[]>([]);
   const [showFavorites, setShowFavorites] = useState(false);
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [file, setFile] = useState<File | null>(null);
+
+  useEffect(() => {
+    setDocuments(mockDocuments);
+  }, []);
+
+  const visibleDocs = showFavorites ? documents.filter((d) => favorites.includes(d.id)) : documents;
 
   const toggleFavorite = (id: number) => {
     setFavorites((prev) =>
@@ -42,102 +49,67 @@ export default function DocumentsPage() {
     );
   };
 
-  // если включён фильтр → показываем только избранное
-  const visibleDocs = showFavorites
-    ? documents.filter((doc) => favorites.includes(doc.id))
-    : documents;
+  const toggleLike = (doc: Document) => {
+    setDocuments((prev) =>
+      prev.map((d) =>
+        d.id === doc.id ? { ...d, likes: (d.likes || 0) + 1 } : d
+      )
+    );
+    setSelectedDoc((prev) =>
+      prev ? { ...prev, likes: (prev.likes || 0) + 1 } : null
+    );
+  };
+
+  const addComment = (text: string) => {
+    if (!text.trim() || !selectedDoc) return;
+    const newComment: Comment = { id: Date.now(), user: "currentUser", text, createdAt: new Date().toISOString() };
+    setSelectedDoc((prev) => prev ? { ...prev, comments: [...(prev.comments || []), newComment] } : null);
+    setDocuments((prev) => prev.map((d) => d.id === selectedDoc.id ? { ...d, comments: [...(d.comments || []), newComment] } : d));
+  };
+
+  const addDocument = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!title || !file) return;
+    const newDoc: Document = {
+      id: Date.now(),
+      title,
+      description,
+      fileUrl: URL.createObjectURL(file),
+      likes: 0,
+      comments: [],
+    };
+    setDocuments((prev) => [newDoc, ...prev]);
+    setTitle(""); setDescription(""); setFile(null);
+  };
 
   return (
     <div className="max-w-5xl mx-auto p-6">
       <h1 className="text-3xl font-bold text-center mb-8">Список документов</h1>
 
-      {/* Панель управления */}
+      {/* Добавление документа */}
+      <form onSubmit={addDocument} className="mb-6 p-4 border rounded-xl shadow-sm flex flex-col gap-2">
+        <input type="text" placeholder="Название" value={title} onChange={e => setTitle(e.target.value)} className="w-full p-2 border rounded" required />
+        <input type="text" placeholder="Описание" value={description} onChange={e => setDescription(e.target.value)} className="w-full p-2 border rounded" />
+        <input type="file" onChange={e => e.target.files && setFile(e.target.files[0])} className="w-full p-2 border rounded" required />
+        <button type="submit" className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 mt-2">Добавить</button>
+      </form>
+
       <div className="flex justify-end mb-6">
-        <button
-          onClick={() => setShowFavorites((prev) => !prev)}
-          className="flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-300 text-sm hover:bg-gray-100 transition"
-        >
-          {showFavorites ? (
-            <>
-              <Star className="w-5 h-5 text-yellow-500 fill-yellow-400" />
-              Показать все
-            </>
-          ) : (
-            <>
-              <Star className="w-5 h-5 text-gray-400" />
-              Только избранное
-            </>
-          )}
+        <button onClick={() => setShowFavorites(prev => !prev)} className="flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-300 text-sm hover:bg-gray-100 transition">
+          {showFavorites ? "Показать все" : "Только избранное"}
         </button>
       </div>
 
-      {/* Список карточек */}
-      {visibleDocs.length > 0 ? (
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {visibleDocs.map((doc) => (
-            <div
-              key={doc.id}
-              className="bg-white shadow-md rounded-2xl p-6 border border-gray-100 hover:shadow-lg transition-shadow flex flex-col justify-between"
-            >
-              <div>
-                <h2 className="text-xl font-semibold text-gray-800 mb-1">
-                  {doc.title}
-                </h2>
-                <p className="text-gray-500 text-sm mb-3">{doc.description}</p>
-              </div>
+      <DocumentsList documents={visibleDocs} favorites={favorites} toggleFavorite={toggleFavorite} onSelect={setSelectedDoc} />
 
-              <div className="flex justify-between items-center mt-2">
-                <button
-                  onClick={() => setSelectedDoc(doc)}
-                  className="px-3 py-1 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700"
-                >
-                  Открыть
-                </button>
-
-                <button
-                  onClick={() => toggleFavorite(doc.id)}
-                  className="text-yellow-500 hover:text-yellow-600"
-                >
-                  {favorites.includes(doc.id) ? (
-                    <Star className="w-6 h-6 fill-yellow-400" />
-                  ) : (
-                    <StarOff className="w-6 h-6" />
-                  )}
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <p className="text-center text-gray-500 mt-10">
-          {showFavorites
-            ? "В избранном пока нет документов."
-            : "Документы не найдены."}
-        </p>
-      )}
-
-      {/* Модальное окно */}
-      <Dialog
-        open={!!selectedDoc}
+      <DocumentPopup
+        document={selectedDoc}
         onClose={() => setSelectedDoc(null)}
-        className="relative z-50"
-      >
-        <div className="fixed inset-0 bg-black/40" aria-hidden="true" />
-        <div className="fixed inset-0 flex items-center justify-center p-4">
-          <Dialog.Panel className="bg-white rounded-2xl p-6 max-w-lg w-full shadow-lg">
-            <Dialog.Title className="text-xl font-semibold mb-4">
-              {selectedDoc?.title}
-            </Dialog.Title>
-            <p className="text-gray-700 mb-6">{selectedDoc?.content}</p>
-            <button
-              onClick={() => setSelectedDoc(null)}
-              className="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300"
-            >
-              Закрыть
-            </button>
-          </Dialog.Panel>
-        </div>
-      </Dialog>
+        toggleFavorite={toggleFavorite}
+        toggleLike={toggleLike}
+        addComment={addComment}
+        favorites={favorites}
+      />
     </div>
   );
 }

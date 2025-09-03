@@ -1,46 +1,79 @@
-export const employees = [
+// data/mockData.ts
+
+
+export type Employee = {
+  id: number;
+  name: string;
+  email: string;
+  position: string;
+  duties: string;
+  responsibilities: string[];
+  documentsCount: number;
+};
+export const employees: Employee[] = [
   {
     id: 1,
-    name: "Иван Петров",
-    position: "Frontend Developer",
+    name: "Иван Иванов",
+    email: "ivan.ivanov@example.com",
+    position: "Менеджер проектов",
+    duties: "Координация проектов и задач команды",
     responsibilities: [
-      "Разработка UI на React",
-      "Интеграция с API",
-      "Оптимизация производительности"
+      "Планирование сроков",
+      "Контроль выполнения задач",
+      "Взаимодействие с заказчиком"
     ],
-    duties: "Создание и поддержка клиентской части веб-приложений."
+    documentsCount: 12,
   },
   {
     id: 2,
-    name: "Анна Сидорова",
-    position: "Backend Developer",
+    name: "Мария Петрова",
+    email: "maria.petrova@example.com",
+    position: "Разработчик",
+    duties: "Разработка фронтенда и поддержка интерфейсов",
     responsibilities: [
-      "Проектирование архитектуры",
-      "Реализация REST API",
-      "Работа с базами данных"
+      "Создание компонентов React",
+      "Интеграция с API",
+      "Оптимизация производительности"
     ],
-    duties: "Разработка серверной логики и интеграций."
+    documentsCount: 8,
   },
   {
     id: 3,
-    name: "Дмитрий Иванов",
-    position: "UI/UX Designer",
+    name: "Алексей Смирнов",
+    email: "alex.smirnov@example.com",
+    position: "Тестировщик",
+    duties: "Тестирование функционала и поиск багов",
     responsibilities: [
-      "Создание макетов интерфейсов",
-      "Работа с Figma",
-      "Подготовка дизайн-системы"
+      "Разработка тест-кейсов",
+      "Проверка новых фич",
+      "Документирование ошибок"
     ],
-    duties: "Отвечает за визуальное оформление и удобство продукта."
+    documentsCount: 5,
   },
   {
     id: 4,
-    name: "Мария Кузнецова",
-    position: "Project Manager",
+    name: "Екатерина Кузнецова",
+    email: "ekaterina.kuznetsova@example.com",
+    position: "Дизайнер",
+    duties: "Создание UI/UX дизайнов для продуктов",
     responsibilities: [
-      "Планирование задач",
-      "Управление командой",
-      "Коммуникация с клиентами"
+      "Проектирование макетов",
+      "Создание прототипов",
+      "Сотрудничество с разработчиками"
     ],
-    duties: "Организация работы команды и контроль сроков."
-  }
+    documentsCount: 9,
+  },
+  {
+    id: 5,
+    name: "Дмитрий Соколов",
+    email: "dmitry.sokolov@example.com",
+    position: "Разработчик",
+    duties: "Работа с бэкендом и базами данных",
+    responsibilities: [
+      "Создание REST API",
+      "Оптимизация запросов",
+      "Обеспечение безопасности данных"
+    ],
+    documentsCount: 14,
+  },
 ];
