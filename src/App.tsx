@@ -8,6 +8,7 @@ import LiteraturePage from "./pages/LiteraturePage";
 import DocumentsPage from "./pages/DocumentsPage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
+import UsersList from "./pages/UsersList";
 
 const UserProfile = React.lazy(() => import('./pages/UserProfile'));
 const App = () => {
@@ -26,6 +27,8 @@ const App = () => {
             <Route path="/documents" element={<DocumentsPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
+            <Route path="/users/admin" element={<UsersList />} />
+
           </Routes>
         </React.Suspense>
       </div>

@@ -1,17 +1,43 @@
 import { NavLink, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 
 const Navbar = () => {
   const navigate = useNavigate();
+  const [user, setUser] = useState<{ username: string } | null>(null);
+
+  // Функция для обновления состояния пользователя из localStorage
+  const updateUser = () => {
+    const storedUser = localStorage.getItem("user");
+    setUser(storedUser ? JSON.parse(storedUser) : null);
+  };
+
+  // Проверка при монтировании и подписка на событие "storageChange"
+  useEffect(() => {
+    updateUser();
+
+    const handleStorageChange = () => updateUser();
+
+    window.addEventListener("storageChange", handleStorageChange);
+
+    return () => {
+      window.removeEventListener("storageChange", handleStorageChange);
+    };
+  }, []);
 
   const handleLogout = () => {
-    // Здесь можно добавить логику очистки сессии или токена
+    localStorage.removeItem("user");
+    setUser(null);
     navigate("/");
+  };
+
+  const handleLogin = () => {
+    navigate("/login");
   };
 
   return (
     <nav className="bg-white shadow-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative h-16 flex items-center">
-        {/* Ссылки по центру в одну строку */}
+        {/* Ссылки по центру */}
         <div className="absolute left-1/2 transform -translate-x-1/2 flex space-x-8 whitespace-nowrap">
           <NavLink
             to="/briefing"
@@ -56,14 +82,23 @@ const Navbar = () => {
           </NavLink>
         </div>
 
-        {/* Кнопка Выйти справа */}
+        {/* Кнопка справа */}
         <div className="ml-auto">
-          <button
-            onClick={handleLogout}
-            className="px-3 py-2 bg-indigo-500 text-white rounded-md text-sm font-medium hover:bg-indigo-600 transition"
-          >
-            Выйти
-          </button>
+          {user ? (
+            <button
+              onClick={handleLogout}
+              className="px-3 py-2 bg-indigo-500 text-white rounded-md text-sm font-medium hover:bg-indigo-600 transition"
+            >
+              Выйти
+            </button>
+          ) : (
+            <button
+              onClick={handleLogin}
+              className="px-3 py-2 bg-indigo-500 text-white rounded-md text-sm font-medium hover:bg-indigo-600 transition"
+            >
+              Войти
+            </button>
+          )}
         </div>
       </div>
     </nav>

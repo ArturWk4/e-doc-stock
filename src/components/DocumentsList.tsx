@@ -14,7 +14,7 @@ type Props = {
   documents: Document[];
   favorites: number[];
   toggleFavorite: (id: number) => void;
-  onSelect: (doc: Document) => void;
+  onSelect: (id: number) => void; // теперь передаем только id
 };
 
 export default function DocumentsList({ documents, favorites, toggleFavorite, onSelect }: Props) {
@@ -24,7 +24,7 @@ export default function DocumentsList({ documents, favorites, toggleFavorite, on
         <div
           key={doc.id}
           className="border rounded-lg p-4 flex flex-col items-center cursor-pointer hover:bg-gray-100"
-          onClick={() => onSelect(doc)}
+          onClick={() => onSelect(doc.id)} // передаем id
         >
           <div className="w-20 h-20 bg-gray-200 flex items-center justify-center mb-2 overflow-hidden">
             {doc.fileUrl?.match(/\.(jpg|jpeg|png|gif)$/) ? (

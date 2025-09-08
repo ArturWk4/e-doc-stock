@@ -1,30 +1,40 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const RegisterPage = () => {
   const [username, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
+  const navigate = useNavigate()
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await fetch("http://localhost:5000/auth/register", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ username, email, password }),
+      const res = await axios.post("http://localhost:5000/auth/register", {
+          username,
+          email,
+          password,
         });
-
-      if (res.ok) {
-        console.log(res)
+      if (res.data) {
+        localStorage.setItem("user", JSON.stringify({
+          id: res.data.user.id,
+          username: res.data.user.username,
+          email: res.data.user.email,
+          token: res.data.token,
+          role: res.data.user.role,
+          amountDoc: res.data.user.amounDoc,
+        }));
+        window.dispatchEvent(new Event("storageChange")); // уведомляем Navbar
+        navigate("/profile")
         setMessage("✅ Регистрация успешна!");
         setName(""); 
         setEmail(""); 
         setPassword("");
       } else {
-        const errorText = await res.text();
-        setMessage("❌ Ошибка: " + errorText);
+        setMessage("❌ Ошибка");
       }
     } catch (err) {
       setMessage("❌ Сервер недоступен");

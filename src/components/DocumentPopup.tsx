@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { Dialog } from "@headlessui/react";
-import { Heart, Star } from "lucide-react";
+import { Star } from "lucide-react";
+import { User } from "../pages/UserProfile";
+import axios from "axios";
 
 type Comment = { id: number; user: string; text: string; createdAt: string };
 type Document = {
@@ -17,15 +19,55 @@ type Props = {
   document: Document | null;
   onClose: () => void;
   toggleFavorite: (id: number) => void;
-  toggleLike: (doc: Document) => void;
   addComment: (text: string) => void;
   favorites: number[];
+  user: User | null;
+  onDeleteDocument?: (id: number) => void; // callback после удаления документа
 };
 
-export default function DocumentPopup({ document, onClose, toggleFavorite, toggleLike, addComment, favorites }: Props) {
+export default function DocumentPopup({
+  user,
+  document,
+  onClose,
+  toggleFavorite,
+  addComment,
+  favorites,
+  onDeleteDocument,
+}: Props) {
   const [commentText, setCommentText] = useState("");
 
   if (!document) return null;
+
+  const token = localStorage.getItem("user")
+    ? JSON.parse(localStorage.getItem("user")!).token
+    : null;
+
+  const handleDeleteComment = async (commentId: number) => {
+    if (!token) return;
+    try {
+      await axios.delete(`http://localhost:5000/comments/${commentId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      // Обновляем локально список комментариев
+      document.comments = document.comments?.filter((c) => c.id !== commentId);
+      setCommentText(""); // сброс инпута
+    } catch (err) {
+      console.error("Ошибка удаления комментария", err);
+    }
+  };
+
+  const handleDeleteDocument = async () => {
+    if (!token) return;
+    try {
+      await axios.delete(`http://localhost:5000/documents/${document.id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (onDeleteDocument) onDeleteDocument(document.id);
+      onClose();
+    } catch (err) {
+      console.error("Ошибка удаления документа", err);
+    }
+  };
 
   return (
     <Dialog open={!!document} onClose={onClose} className="relative z-50">
@@ -35,22 +77,19 @@ export default function DocumentPopup({ document, onClose, toggleFavorite, toggl
           <Dialog.Title className="text-xl font-semibold mb-2">{document.title}</Dialog.Title>
           <p className="text-gray-500 mb-4">{document.description}</p>
 
-          {document.fileUrl?.match(/\.(jpg|jpeg|png|gif)$/) ? (
-            <img src={document.fileUrl} alt={document.title} className="w-full h-64 object-cover mb-4" />
-          ) : document.fileUrl?.match(/\.(mp4|mov|webm)$/) ? (
-            <video src={document.fileUrl} controls className="w-full mb-4" />
-          ) : document.fileUrl ? (
-            <a href={document.fileUrl} download className="text-blue-600 underline mb-4 block">Скачать файл</a>
+          {document.fileUrl ? (
+            <a
+              href={`http://localhost:5000/documents/download/${document.id}`}
+              download
+              className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 mb-4 inline-block"
+            >
+              Скачать файл
+            </a>
           ) : (
             <p className="text-gray-700 mb-4">{document.content}</p>
           )}
 
           <div className="flex gap-4 mb-4">
-            <button onClick={() => toggleLike(document)} className="flex items-center gap-2">
-              <Heart className={`w-6 h-6 ${document.likes && document.likes > 0 ? "text-red-500 fill-red-500" : "text-gray-400"}`} />
-              {document.likes || 0}
-            </button>
-
             <button
               onClick={() => toggleFavorite(document.id)}
               className={`flex items-center gap-2 px-3 py-1 rounded border ${
@@ -59,14 +98,36 @@ export default function DocumentPopup({ document, onClose, toggleFavorite, toggl
             >
               <Star className="w-5 h-5" /> {favorites.includes(document.id) ? "В избранном" : "Добавить в избранное"}
             </button>
+
+            {/* Кнопка удаления документа для админа */}
+            {user?.role === "admin" && (
+              <button
+                onClick={handleDeleteDocument}
+                className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700"
+              >
+                Удалить документ
+              </button>
+            )}
           </div>
 
           <div>
             <h3 className="font-semibold mb-2">Комментарии</h3>
             {document.comments?.map((c) => (
-              <div key={c.id} className="mb-2 p-2 border rounded">
-                <p className="text-sm text-gray-700">{c.text}</p>
-                <span className="text-xs text-gray-400">{c.user} • {new Date(c.createdAt).toLocaleString()}</span>
+              <div key={c.id} className="flex items-center justify-between mb-2 p-2 border rounded">
+                <div>
+                  <p className="text-sm text-gray-700">{c.text}</p>
+                  <span className="text-xs text-gray-400">{c.user}</span>
+                </div>
+
+                {/* Кнопка удаления комментария для админа */}
+                {user?.role === "admin" && (
+                  <button
+                    onClick={() => handleDeleteComment(c.id)}
+                    className="text-xs text-red-500 hover:underline"
+                  >
+                    Удалить
+                  </button>
+                )}
               </div>
             ))}
 
@@ -84,7 +145,10 @@ export default function DocumentPopup({ document, onClose, toggleFavorite, toggl
                 placeholder="Напишите комментарий..."
                 className="w-full p-2 border rounded mb-2"
               />
-              <button type="submit" className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700">
+              <button
+                type="submit"
+                className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700"
+              >
                 Отправить
               </button>
             </form>

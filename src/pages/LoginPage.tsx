@@ -1,27 +1,33 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
+  const navigate = useNavigate()
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await fetch("http://localhost:3000/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
+      const data = {email, password}
+      console.log(data)
+      const res = await axios.post("http://localhost:5000/auth/login", 
+        data,
+      );
 
-      if (res.ok) {
-        const data = await res.json();
+      if (res.data) {
+        const data = res.data
+        console.log(data)
         setMessage("✅ Успешный вход: " + data.user.name);
-        localStorage.setItem("user", JSON.stringify(data.user));
+        localStorage.setItem("user", JSON.stringify(data));
+        window.dispatchEvent(new Event("storageChange")); // уведомляем Navbar
+        navigate("/profile")
+
       } else {
-        const errorText = await res.text();
-        setMessage("❌ Ошибка: " + errorText);
+        setMessage("❌ Ошибка: ");
       }
     } catch (err) {
       setMessage("❌ Сервер недоступен");
