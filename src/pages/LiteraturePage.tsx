@@ -3,18 +3,10 @@ import axios from "axios";
 import DocumentsList from "../components/DocumentsList";
 import DocumentPopup from "../components/DocumentPopup";
 import { User } from "./UserProfile";
+import { Document } from "./DocumentsPage";
 
 type Comment = { id: number; user: string; text: string; createdAt: string };
-type Document = {
-  id: number;
-  title: string;
-  description: string;
-  fileUrl?: string;
-  content?: string;
-  likes?: number;
-  comments?: Comment[];
-  isAdmin?: boolean; // добавлено
-};
+
 
 type StoredUser = {
   token: string;
@@ -28,6 +20,8 @@ const LiteraturePage = () => {
   const [selectedDoc, setSelectedDoc] = useState<Document | null>(null);
   const [favorites, setFavorites] = useState<number[]>([]);
   const [user, setUser] = useState<User | null>(null);
+      const [sortPosition, setSortPosition] = useState<string>("Все");
+  
 
   // Загружаем документы и юзера
   useEffect(() => {
@@ -132,6 +126,9 @@ const LiteraturePage = () => {
       <h1 className="text-3xl font-bold text-center mb-8">Литература от админа</h1>
 
       <DocumentsList
+      sortPosition={sortPosition}
+      setSortPosition={setSortPosition}
+        isAdmin={true}
         documents={documents}
         favorites={favorites}
         toggleFavorite={toggleFavorite}

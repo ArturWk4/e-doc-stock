@@ -19,14 +19,8 @@ const RegisterPage = () => {
           password,
         });
       if (res.data) {
-        localStorage.setItem("user", JSON.stringify({
-          id: res.data.user.id,
-          username: res.data.user.username,
-          email: res.data.user.email,
-          token: res.data.token,
-          role: res.data.user.role,
-          amountDoc: res.data.user.amounDoc,
-        }));
+        const data = res.data
+        localStorage.setItem("user", JSON.stringify(data));
         window.dispatchEvent(new Event("storageChange")); // уведомляем Navbar
         navigate("/profile")
         setMessage("✅ Регистрация успешна!");

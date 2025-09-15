@@ -52,8 +52,10 @@ const UsersList = () => {
 
     try {
       const storedUser = localStorage.getItem(LOCAL_STORAGE_KEY);
+      console.log(storedUser)
       if (!storedUser) return;
       const token = JSON.parse(storedUser).token;
+      console.log(token)
 
       await axios.delete(`http://localhost:5000/auth/users/${id}`, {
         headers: { Authorization: `Bearer ${token}` },

@@ -27,6 +27,7 @@ const LoginPage = () => {
         navigate("/profile")
 
       } else {
+        
         setMessage("❌ Ошибка: ");
       }
     } catch (err) {

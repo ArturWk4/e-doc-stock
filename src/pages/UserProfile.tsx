@@ -32,6 +32,7 @@ const UserProfile = () => {
     const storedUser = localStorage.getItem(LOCAL_STORAGE_KEY);
     if (storedUser) {
       const parsed = JSON.parse(storedUser);
+      console.log(storedUser)
       if (parsed.user) {
         setUser(parsed.user);
         setFormData(parsed.user);
@@ -52,6 +53,7 @@ const UserProfile = () => {
       if (!storedUser) return;
 
       const parsed = JSON.parse(storedUser);
+      console.log(parsed)
       const userId = parsed.user.id;
       const token = parsed.token;
 
@@ -67,6 +69,7 @@ const UserProfile = () => {
 
         // Обновляем localStorage
         parsed.user = res.data.user;
+        console.log(parsed.user)
         localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(parsed));
       }
     } catch (err) {
@@ -166,12 +169,12 @@ const UserProfile = () => {
             >
               {isEditing ? "Сохранить" : "Редактировать"}
             </button>
-                      <button
+              {/* <button
                 onClick={toggleRole}
                 className="w-full px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition"
               >
                 {user.role === "admin" ? "Сделать пользователем" : "Сделать администратором"}
-              </button>
+              </button> */}
 
             {user.role === "admin" && (
               <button

@@ -6,7 +6,7 @@ import axios from "axios";
 import { User } from "./UserProfile";
 
 type Comment = { id: number; user: string; text: string; createdAt: string };
-type Document = {
+export type Document = {
   id: number;
   title: string;
   description: string;
@@ -14,6 +14,8 @@ type Document = {
   content?: string;
   likes?: number;
   comments?: Comment[];
+  user?: User;
+  isAdmin: boolean;
 };
 
 type StoredUser = {
@@ -33,6 +35,8 @@ export default function DocumentsPage() {
   const [description, setDescription] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [user, setUser] = useState<User | null>(null);
+    const [sortPosition, setSortPosition] = useState<string>("Все");
+  
 
   // Загружаем документы и юзера
   useEffect(() => {
@@ -174,7 +178,9 @@ export default function DocumentsPage() {
           description: savedDoc.description,
           fileUrl: `http://localhost:5000/uploads/${savedDoc.path}`,
           likes: 0,
+          isAdmin: savedDoc.isAddmin,
           comments: [],
+          user: savedDoc.user
         },
         ...prev,
       ]);
@@ -240,7 +246,10 @@ export default function DocumentsPage() {
       </div>
 
       <DocumentsList
+        isAdmin={false}
         documents={visibleDocs}
+        sortPosition={sortPosition}
+        setSortPosition={setSortPosition}
         favorites={favorites}
         toggleFavorite={toggleFavorite}
         onSelect={selectDocument}
