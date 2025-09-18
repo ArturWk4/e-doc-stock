@@ -26,17 +26,18 @@ const LoginPage = () => {
         window.dispatchEvent(new Event("storageChange")); // уведомляем Navbar
         navigate("/profile")
 
-      } else {
-        
-        setMessage("❌ Ошибка: ");
-      }
-    } catch (err) {
+      } 
+    } catch (err:any) {
+      if (err.response && err.response.data && err.response.data.message) {
+      setMessage("❌ " + err.response.data.message);
+    } else {
       setMessage("❌ Сервер недоступен");
+    }
     }
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-r from-indigo-500 via-purple-600 to-indigo-400 p-4">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-skyCustom p-4">
       <motion.h1
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -63,7 +64,7 @@ const LoginPage = () => {
           className="w-full mb-4 p-3 border rounded-lg"
           required
         />
-        <button type="submit" className="w-full py-3 bg-purple-600 text-white rounded-xl hover:bg-purple-700 transition">
+        <button type="submit" className="w-full py-3 bg-blue-500 shadow-2xl text-white rounded-xl hover:bg-indigo-500 transition">
           Войти
         </button>
       </form>

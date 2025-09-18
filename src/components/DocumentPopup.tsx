@@ -22,7 +22,8 @@ type Props = {
   addComment: (text: string) => void;
   favorites: number[];
   user: User | null;
-  onDeleteDocument?: (id: number) => void; // callback после удаления документа
+  onDeleteDocument?: (id: number) => void;
+  onDeleteComment?: (commentId: number, docId: number) => void; // ✅ новое
 };
 
 export default function DocumentPopup({
@@ -33,6 +34,7 @@ export default function DocumentPopup({
   addComment,
   favorites,
   onDeleteDocument,
+  onDeleteComment
 }: Props) {
   const [commentText, setCommentText] = useState("");
 
@@ -121,13 +123,15 @@ export default function DocumentPopup({
 
                 {/* Кнопка удаления комментария для админа */}
                 {user?.role === "admin" && (
-                  <button
-                    onClick={() => handleDeleteComment(c.id)}
-                    className="text-xs text-red-500 hover:underline"
-                  >
-                    Удалить
-                  </button>
-                )}
+  <button
+    onClick={() =>
+      document && onDeleteComment?.(c.id, document.id) // ✅
+    }
+    className="text-xs text-red-500 hover:underline"
+  >
+    Удалить
+  </button>
+)}
               </div>
             ))}
 

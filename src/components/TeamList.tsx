@@ -89,7 +89,7 @@ export default function TeamList({
           ))}
         </div>
           {user.role === "admin" && <button
-          className="px-4 py-2 bg-green-600 text-white rounded-full hover:bg-green-700 transition-colors"
+          className="px-4 py-2 bg-blue-500 text-white rounded-full hover:bg-indigo-500 transition-colors"
           onClick={() => setIsAdding(!isAdding)}
         >
           {isAdding ? "Отмена" : "+ Добавить сотрудника"}
@@ -149,7 +149,7 @@ export default function TeamList({
 
           <button
             onClick={handleAddEmployee}
-            className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+            className="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-indigo-500"
           >
             Добавить сотрудника
           </button>
@@ -169,7 +169,7 @@ export default function TeamList({
                 e.stopPropagation();
                 onDeleteEmployee(emp.id);
               }}
-              className="absolute top-4 right-4 w-8 h-8 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors"
+              className="absolute top-4 right-4 w-12 h-12"
               title="Удалить сотрудника"
             >
               ×

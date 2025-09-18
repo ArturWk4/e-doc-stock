@@ -65,7 +65,7 @@ export default function DocumentsList({
               key={pos}
               className={`px-4 py-2 rounded-full border transition-colors ${
                 sortPosition === pos
-                  ? "bg-blue-600 text-white border-blue-600"
+                  ? "bg-blue-500 text-white border-blue-600"
                   : "bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
               }`}
               onClick={() => setSortPosition(pos)}

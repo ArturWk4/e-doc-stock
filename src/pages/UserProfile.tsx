@@ -6,7 +6,7 @@ import axios from "axios";
 const LOCAL_STORAGE_KEY = "user";
 
 export interface User {
-  id?: number; // добавляем id для обращения к бэкенду
+  id?: number;
   username: string;
   email: string;
   role: string;
@@ -14,15 +14,8 @@ export interface User {
 }
 
 const UserProfile = () => {
-  const defaultUser: User = {
-    username: "Гость",
-    email: "guest@example.com",
-    role: "user",
-    amountDoc: 0,
-  };
-
-  const [user, setUser] = useState<User>(defaultUser);
-  const [formData, setFormData] = useState<User>(defaultUser);
+  const [user, setUser] = useState<User | null>(null);
+  const [formData, setFormData] = useState<User | null>(null);
   const [isEditing, setIsEditing] = useState(false);
 
   const navigate = useNavigate();
@@ -32,7 +25,6 @@ const UserProfile = () => {
     const storedUser = localStorage.getItem(LOCAL_STORAGE_KEY);
     if (storedUser) {
       const parsed = JSON.parse(storedUser);
-      console.log(storedUser)
       if (parsed.user) {
         setUser(parsed.user);
         setFormData(parsed.user);
@@ -43,7 +35,7 @@ const UserProfile = () => {
   // Обработка изменения инпутов
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData((prev) => (prev ? { ...prev, [name]: value } : null));
   };
 
   // Обновление данных пользователя (username, email, role)
@@ -53,7 +45,6 @@ const UserProfile = () => {
       if (!storedUser) return;
 
       const parsed = JSON.parse(storedUser);
-      console.log(parsed)
       const userId = parsed.user.id;
       const token = parsed.token;
 
@@ -69,7 +60,6 @@ const UserProfile = () => {
 
         // Обновляем localStorage
         parsed.user = res.data.user;
-        console.log(parsed.user)
         localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(parsed));
       }
     } catch (err) {
@@ -79,7 +69,7 @@ const UserProfile = () => {
 
   // Переключение редактирования username/email
   const handleEditToggle = async () => {
-    if (isEditing) {
+    if (isEditing && formData) {
       await updateUserData({ username: formData.username, email: formData.email });
     } else {
       setFormData(user);
@@ -89,21 +79,29 @@ const UserProfile = () => {
 
   // Переключение роли пользователя
   const toggleRole = async () => {
+    if (!user) return;
     const newRole = user.role === "admin" ? "user" : "admin";
     await updateUserData({ role: newRole });
   };
+
+  if (!user) {
+    return (
+      <div className="text-center text-blue-800 font-semibold text-2xl mt-10">
+        Необходимо авторизоваться
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-lg mx-auto mt-10">
       <div className="bg-white shadow-xl rounded-2xl overflow-hidden">
         {/* Верхняя часть с аватаром */}
-        <div className="bg-indigo-600 p-6 flex items-center space-x-4">
+        <div className="bg-skyCustom p-6 flex items-center space-x-4">
           <FaUserCircle className="text-6xl text-white" />
           <div>
             <h2 className="text-2xl font-bold text-white">{user.username}</h2>
             <p className="text-indigo-200">{user.email}</p>
           </div>
-
         </div>
 
         {/* Основная информация */}
@@ -111,7 +109,7 @@ const UserProfile = () => {
           <div className="space-y-2">
             <div>
               <label className="block text-gray-600 font-medium mb-1">Имя</label>
-              {isEditing ? (
+              {isEditing && formData ? (
                 <input
                   type="text"
                   name="username"
@@ -125,10 +123,8 @@ const UserProfile = () => {
             </div>
 
             <div>
-              <label className="block text-gray-600 font-medium mb-1">
-                Email
-              </label>
-              {isEditing ? (
+              <label className="block text-gray-600 font-medium mb-1">Email</label>
+              {isEditing && formData ? (
                 <input
                   type="email"
                   name="email"
@@ -155,9 +151,6 @@ const UserProfile = () => {
               <span className="text-indigo-500 mb-1">🎖️</span>
               <span className="font-semibold text-gray-800">{user.role || "-"}</span>
               <span className="text-gray-500 text-sm">Роль</span>
-
-              {/* Кнопка для переключения роли */}
-              
             </div>
           </div>
 
@@ -165,21 +158,15 @@ const UserProfile = () => {
           <div className="mt-6 flex flex-col space-y-3">
             <button
               onClick={handleEditToggle}
-              className="w-full px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition"
+              className="w-full px-4 py-2 bg-blue-500 shadow-2xl text-white rounded-md hover:bg-indigo-500 transition"
             >
               {isEditing ? "Сохранить" : "Редактировать"}
             </button>
-              {/* <button
-                onClick={toggleRole}
-                className="w-full px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition"
-              >
-                {user.role === "admin" ? "Сделать пользователем" : "Сделать администратором"}
-              </button> */}
 
             {user.role === "admin" && (
               <button
                 onClick={() => navigate("/users/admin")}
-                className="w-full px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition"
+                className="w-full px-4 py-2 bg-blue-500 shadow-2xl text-white rounded-md hover:bg-indigo-500 transition"
               >
                 Все пользователи
               </button>

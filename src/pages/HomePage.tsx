@@ -42,7 +42,7 @@ const HomePage = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-r from-indigo-500 via-purple-600 to-indigo-400 p-4">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-skyCustom p-4">
       <motion.h1
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -54,14 +54,14 @@ const HomePage = () => {
       <div className="flex items-center gap-10">
                   <NavLink
               to="/login"
-              className='text-white px-3 py-2 rounded-xl text-2xl font-medium border-2 border-indigo-600'
+              className='text-white px-3 py-2 rounded-xl bg-blue-500 shadow-2xl text-2xl font-medium'
               
             >
               Вход
             </NavLink>
                         <NavLink
               to="/register"
-              className='text-white px-3 py-2 rounded-xl text-2xl font-medium border-2 border-indigo-600'
+              className='text-white px-3 py-2 rounded-xl text-2xl font-medium  bg-blue-500 shadow-2xl'
                   
             >
               Регистрация

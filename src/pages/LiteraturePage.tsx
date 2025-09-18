@@ -121,11 +121,51 @@ const LiteraturePage = () => {
     }
   };
 
+  // ❌ В DocumentsPage добавляем новую функцию
+const deleteComment = async (commentId: number, docId: number) => {
+  try {
+    const storedUser = localStorage.getItem("user");
+    const token = storedUser ? JSON.parse(storedUser).token : null;
+    if (!token) return;
+
+    await axios.delete(`http://localhost:5000/comments/${commentId}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    // Обновляем state
+    setDocuments((prev) =>
+      prev.map((d) =>
+        d.id === docId
+          ? { ...d, comments: d.comments?.filter((c) => c.id !== commentId) }
+          : d
+      )
+    );
+
+    // Обновляем selectedDoc
+    setSelectedDoc((prev) =>
+      prev
+        ? {
+            ...prev,
+            comments: prev.comments?.filter((c) => c.id !== commentId),
+          }
+        : null
+    );
+  } catch (err) {
+    console.error("Ошибка удаления комментария", err);
+  }
+};
+
+
   return (
     <div className="max-w-5xl mx-auto p-6">
-      <h1 className="text-3xl font-bold text-center mb-8">Литература от админа</h1>
-
-      <DocumentsList
+      {!user ? (
+      <div className="text-center text-blue-800 font-semibold text-4xl">
+        Необходимо авторизоваться
+      </div>
+    ) : (
+      <>
+         <h1 className="text-3xl font-bold text-center mb-8">Литература компании</h1>
+         {documents.length > 0 ? <DocumentsList
       sortPosition={sortPosition}
       setSortPosition={setSortPosition}
         isAdmin={true}
@@ -133,7 +173,11 @@ const LiteraturePage = () => {
         favorites={favorites}
         toggleFavorite={toggleFavorite}
         onSelect={selectDocument}
-      />
+      /> : <div className="text-center text-blue-800 font-semibold text-4xl">
+        Нет документов от компании
+      </div>}
+
+      
 
       <DocumentPopup
   document={selectedDoc}
@@ -143,7 +187,12 @@ const LiteraturePage = () => {
   favorites={favorites}
   user={user}
   onDeleteDocument={removeDocumentFromList} // ✅
+            onDeleteComment={deleteComment}
+
 />
+      </>
+    )}
+     
 
     </div>
   );

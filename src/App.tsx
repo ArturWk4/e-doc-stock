@@ -3,7 +3,7 @@ import React, { useEffect } from "react";
 import Navbar from "./components/NavBar";
 import HomePage from "./pages/HomePage";
 import "./index.css";
-import BriefingPage from "./pages/BriefingPage";
+import BriefingPage from "./pages/StructurePage";
 import LiteraturePage from "./pages/LiteraturePage";
 import DocumentsPage from "./pages/DocumentsPage";
 import LoginPage from "./pages/LoginPage";

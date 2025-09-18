@@ -5,36 +5,27 @@ import EmployeePopup from "../components/EmployeePopup";
 import type { Employee } from "../data/mockData";
 import { User } from "./UserProfile";
 
-
 const LOCAL_STORAGE_KEY = "user";
 
-  const defaultUser: User = {
-    username: "Гость",
-    email: "guest@example.com",
-    role: "user",
-    amountDoc: 0,
-  };
 export default function EmployeesPage() {
   const [sortPosition, setSortPosition] = useState<string>("Все");
   const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [loading, setLoading] = useState(true);
-    const [formData, setFormData] = useState<User>(defaultUser);
-  
-    const [user, setUser] = useState<User>(defaultUser);
-  
 
-    useEffect(() => {
-      const storedUser = localStorage.getItem(LOCAL_STORAGE_KEY);
-      if (storedUser) {
-        const parsed = JSON.parse(storedUser);
-        console.log(storedUser)
-        if (parsed.user) {
-          setUser(parsed.user);
-          setFormData(parsed.user);
-        }
+  const [formData, setFormData] = useState<User | null>(null);
+  const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem(LOCAL_STORAGE_KEY);
+    if (storedUser) {
+      const parsed = JSON.parse(storedUser);
+      if (parsed.user) {
+        setUser(parsed.user);
+        setFormData(parsed.user);
       }
-    }, []);
+    }
+  }, []);
 
   // Загружаем сотрудников с API
   useEffect(() => {
@@ -82,17 +73,25 @@ export default function EmployeesPage() {
 
   return (
     <div className="max-w-5xl mx-auto p-6">
-      <h1 className="text-3xl font-bold text-center mb-8">Наша команда</h1>
+      {!user ? (
+        <div className="text-center text-blue-800 font-semibold text-4xl">
+          Необходимо авторизоваться
+        </div>
+      ) : (
+        <>
+          <h1 className="text-3xl font-bold text-center mb-8">Структура компании</h1>
 
-      <TeamList
-      user={user}
-        employees={employees}
-        sortPosition={sortPosition}
-        setSortPosition={setSortPosition}
-        onSelect={setSelectedEmployee}
-        onAddEmployee={handleAddEmployee}
-        onDeleteEmployee={handleDeleteEmployee}
-      />
+          <TeamList
+            user={user}
+            employees={employees}
+            sortPosition={sortPosition}
+            setSortPosition={setSortPosition}
+            onSelect={setSelectedEmployee}
+            onAddEmployee={handleAddEmployee}
+            onDeleteEmployee={handleDeleteEmployee}
+          />
+        </>
+      )}
     </div>
   );
 }

@@ -84,7 +84,7 @@ const UsersList = () => {
             {currentUser?.role === "admin" && (
               <button
                 onClick={() => handleDelete(user.id)}
-                className="mt-3 px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 text-sm"
+                className="mt-3 px-3 py-1 bg-blue-500 text-white rounded hover:bg-indigo-500 text-sm"
               >
                 Удалить
               </button>

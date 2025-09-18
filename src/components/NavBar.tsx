@@ -48,7 +48,7 @@ const Navbar = () => {
                 : "text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium"
             }
           >
-            Инструктаж по должностям
+            Структура компании
           </NavLink>
           <NavLink
             to="/literature"
@@ -87,14 +87,14 @@ const Navbar = () => {
           {user ? (
             <button
               onClick={handleLogout}
-              className="px-3 py-2 bg-indigo-500 text-white rounded-md text-sm font-medium hover:bg-indigo-600 transition"
+              className="px-3 py-2 bg-blue-500 shadow-2xl text-white rounded-md text-sm font-medium hover:bg-indigo-500 transition"
             >
               Выйти
             </button>
           ) : (
             <button
               onClick={handleLogin}
-              className="px-3 py-2 bg-indigo-500 text-white rounded-md text-sm font-medium hover:bg-indigo-600 transition"
+              className="px-3 py-2 bg-blue-500 shadow-2xl text-white rounded-md text-sm font-medium hover:bg-indigo-500  transition"
             >
               Войти
             </button>
